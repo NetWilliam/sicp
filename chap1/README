@@ -1,0 +1,3 @@
+1. suffix of scheme is `scm`
+2. scheme -load exec1.3.scm see: http://www.cs.brandeis.edu/~jrieffel/cs21/quickstart.html
+3. vim plugins see: https://stackoverflow.com/questions/5352997/programming-schemeracket-with-vim-how-to-get-started
