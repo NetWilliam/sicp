@@ -2,3 +2,4 @@
 2. scheme -load exec1.3.scm see: http://www.cs.brandeis.edu/~jrieffel/cs21/quickstart.html
 3. vim plugins see: https://stackoverflow.com/questions/5352997/programming-schemeracket-with-vim-how-to-get-started
 4. https://stackoverflow.com/questions/1171252/whats-the-explanation-for-exercise-1-6-in-sicp difference between function call and if clause selection
+5. set vim autoindent for scheme like language: https://crash.net.nz/posts/2014/08/configuring-vim-for-sicp/
