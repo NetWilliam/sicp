@@ -1,9 +1,18 @@
+; recursive
 (define (cont-frac n d k)
   (
    if (= k 0)
    (/ (n k) (d k))
    (/ (n k) (+ (d  k) (cont-frac n d (- k 1))))
    ))
+; iterative, an iterative algorithm needs a initial result value, to be done
+(define (cont-frac-i n d k)
+  (define (cont-frac-iter n d k i)
+    if (= i k)
+    (/ (n i) (d i))
+    (/ (n i))
+    )
+  )
 ;(cont-frac (lambda (i) 1.0)
 ;           (lambda (i) 1.0)
 ;           k)
