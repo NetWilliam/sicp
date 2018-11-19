@@ -44,18 +44,62 @@
   (and (pair? x) (eq? (car x) '*)))
 
 (define (addend s) (cadr s))
+;(define (augend s) (caddr s))
+;(define (augend s)
+;  (cond ((pair? (cddr s)) (make-sum (caddr s) (cdddr s)))
+;        (caddr s)))
+;(define (augend s) (caddr s))
 (define (augend s)
-  (if (pair? (caddr s))
-      (make-sum (caddr s) (cadddr s))
-    (caddr s)))
-(define (augend s) (caddr s))
+  (cond ((number? (cddr p)) (cddr p))
+        ((variable? (cddr p)) (cddr p))
+        (else (make-sum (caddr p) (cdddr p)))))
+(define (augend s)
+  (make-sum-from-list (cddr s)))
+(define (make-sum-from-list l)
+  (cond ((number? l) l)
+        ((null? l) 0)
+        (else
+         (make-sum (car l) (make-sum-from-list (cdr l))))))
+
+;1 ]=> (deriv '(* x y (+ x 3)) 'x)
+;
+;;unkown expression type -- DERIV ((+ x 3))
+;;To continue, call RESTART with an option number:
+;; (RESTART 1) => Return to read-eval-print level 1.
+;
+;2 error> (restart 1)
+;
+;1 ]=> (deriv '(* x y (+ x 3) 5) 'x)
+;
+;;unkown expression type -- DERIV ((+ x 3) 5)
+;;To continue, call RESTART with an option number:
+;; (RESTART 1) => Return to read-eval-print level 1.
+
+;(define (augend s) ; (cdddr s) must be make-sumed recursively
+;  (cond ((= (length (cddr s)) 1) (caddr s))
+;        (else (make-sum (caddr s) (cdddr s)))))
 
 (define (multiplier p) (cadr p))
+;(define (multiplicand p) (caddr p))
+;(define (multiplicand p)
+;  (if (pair? (cddr p))
+;      (make-product (caddr p) (cdddr p))
+;      (caddr p)))
 (define (multiplicand p)
-  (if (pair? (caddr p))
-      (make-product (caddr p) (cadddr p))
-    (caddr p)))
-(define (multiplicand p) (caddr p))
+  (cond ((number? (cddr p)) (cddr p))
+        ((variable? (cddr p)) (cddr p))
+        (else (make-product (caddr p) (cdddr p)))))
+(define (multiplicand p)
+  (make-product-from-list (cddr p)))
+(define (make-product-from-list l)
+  (cond ((number? l) l)
+        ((null? l) 1)
+        (else
+         (make-product (car l) (make-product-from-list (cdr l))))))
+;(define (multiplicand p) (caddr p))
+;(define (multiplicand p)   ; error as (augend s)
+;  (cond ((= (length (cddr p)) 1) (caddr p))
+;        (else (make-product (caddr p) (cdddr p)))))
 
 (define (deriv exp var)
   (cond ((number? exp) 0)
@@ -72,7 +116,7 @@
         ((exponentiation? exp)
          (if (same-variable? (base exp) var)
              (make-product (exponent exp) (make-exponentiation (base exp) (- (exponent exp) 1)))
-           (make-product (log (base exp)) (make-exponentiation (base exp) (exponent exp)))))
+             (make-product (log (base exp)) (make-exponentiation (base exp) (exponent exp)))))
         (else
          (error "unkown expression type -- DERIV" exp))))
 
