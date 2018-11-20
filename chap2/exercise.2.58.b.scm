@@ -20,12 +20,12 @@
         (else (list m1 '* m2))))
 
 (define (addend s) (car s))
-;(define (augend s) (make-sum-from-list (cddr s)))
-(define (augend s) (caddr s))
+(define (augend s) (make-sum-from-list (cddr s)))
+;(define (augend s) (caddr s))
 
 (define (multiplier p) (car p))
-;(define (multiplicand p) (make-product-from-list (cddr p)))
-(define (multiplicand p) (caddr p))
+(define (multiplicand p) (make-product-from-list (cddr p)))
+;(define (multiplicand p) (caddr p))
 
 (define (make-sum-from-list l)
   (cond ((number? l) l)
