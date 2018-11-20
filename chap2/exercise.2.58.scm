@@ -15,13 +15,21 @@
 (define (make-sum-from-list l)
   (cond ((number? l) l)
         ((null? l) 0)
+        ;((product? l) (make-product-from-list l))
         (else
-         (make-sum (car l) (make-sum-from-list (cdr l))))))
+         (make-sum
+          (if (and (list? (car l)) (product? (car l)))
+              (make-product-from-list (car l))
+            (car l))
+          (make-sum-from-list (cdr l))))))
 (define (make-product-from-list l)
   (cond ((number? l) l)
         ((null? l) 1)
+        ;((sum? l) (make-sum-from-list l))
         (else
-         (make-product (car l) (make-product-from-list (cdr l))))))
+         (make-product
+          (if (and (list? (car l)) (sum? )))
+          (make-product-from-list (cdr l))))))
 
 
 (define (make-sum a1 a2)
