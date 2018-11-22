@@ -20,12 +20,12 @@
     (atan (imag-part z) (real-part z)))
   (define (make-from-mag-ang r a)
     (cons (* r (cos a)) (* r (sin a))))
-  (define (tag x) (attach-tag 'rectagular x))
+  (define (tag x) (attach-tag 'rectangular x))
   (put 'real-part '(rectangular) real-part)
   (put 'imag-part '(rectangular) imag-part)
   (put 'magnitude '(rectangular) magnitude)
   (put 'angle '(rectangular) angle)
-  (put 'make-from-real-imag 'rectangluar
+  (put 'make-from-real-imag 'rectangular
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'rectangular
        (lambda (x y) (tag (make-from-mag-ang r a))))
@@ -37,3 +37,19 @@
 ; tagged data
 ; data-directed programming and additivity
 ; message passing
+
+
+(define (put op type item) ())
+(define (get op type) ())
+(define (apply-generic op . args)
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+          (apply proc (map contents args))
+        (error
+         "No method for these types -- APPLY-GENERIC"
+         (list op type-tags))))))
+
+; exercise 2.73 why can't we assimilate the predicates number? and same-variable? into the data-directed dispatch?
+
+(define (apply-generic-message-passing op arg) (arg op))
