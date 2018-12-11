@@ -72,14 +72,14 @@
                        (* (get-value m1) (get-value m2))
                        me))
           ((and (has-value? m1) (has-value? product))
-           (set-value? m2
+           (set-value! m2
                        (/ (get-value product) (get-value m1))
                        me))
           ((and (has-value? m2) (has-value? product))
            (set-value! m1
                        (/ (get-value product) (get-value m2))
                        me))))
-  (define (pocess-forget-value)
+  (define (process-forget-value)
     (forget-value! product me)
     (forget-value! m1 me)
     (forget-value! m2 me)
@@ -138,21 +138,23 @@
 
 (define C (make-connector))
 (define F (make-connector))
+(define XP (make-connector))
 
-(define (celsius-fahrenheit-converter c f)
+(define (celsius-fahrenheit-converter c f xp)
   (let ((u (make-connector))
         (v (make-connector))
         (w (make-connector))
         (x (make-connector))
         (y (make-connector)))
     (multiplier c w u)
-    (multiplier v x u)
+    (multiplier v xp u)
     (adder v y f)
     (constant 9 w)
     (constant 5 x)
     (constant 32 y)
     'ok))
 
-(celsius-fahrenheit-converter C F)
+(celsius-fahrenheit-converter C F XP)
 (probe "Celsius temp" C)
 (probe "Fahrenheit temp" F)
+(probe "XP " XP)
