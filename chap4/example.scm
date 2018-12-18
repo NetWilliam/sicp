@@ -232,6 +232,7 @@
         (list '= =)
         (list '<= <=)
         (list '>= >=)
+        (list 'assoc assoc)
         (list 'square (lambda (x) (* x x)))))
 (define (primitive-procedure-names)
   (map car primitive-procedures))
@@ -275,3 +276,4 @@
                      '<procedure-env>))
       (display object)))
 (define the-global-environment (setup-environment))
+;(driver-loop)
