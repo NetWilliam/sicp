@@ -7,8 +7,10 @@
 ; eval in example eval should return 3: (eval '(cond ((> 1 3) 1) (else 3)) '())
 
 
-(define (cond-extension-symbol? symbol)
-  (eq? symbol '=>))
+(define (cond-clause-with-extension? clause)
+  (memq '=> clause))
+(define (cond-action-with-extension clause) (cddr clause))
+(define (cond-predicate-with-extenssion clause) (car clause))
 
 (define (expand-clauses clauses)
   (if (null? clauses)
@@ -20,6 +22,12 @@
                 (sequence->exp (cond-actions first))
                 (error "ELSE clause isn't last: COND->IF"
                        clauses))
-            (make-if (cond-predicate first)
-                     (sequence->exp (cond-actions first))
-                     (expand-clauses rest))))))
+            (if (cond-clause-with-extension? first)
+                (make-if (cond-predicate-with-extenssion first)
+                         ;(sequence->exp (cond-action-with-extension first))
+                         ;((cond-action-with-extension first) ((cond-predicate-with-extenssion first)))
+                         (list (sequence->exp (cond-action-with-extension first)) (cond-predicate-with-extenssion first))
+                         (expand-clauses rest))
+                (make-if (cond-predicate first)
+                         (sequence->exp (cond-actions first))
+                         (expand-clauses rest)))))))
