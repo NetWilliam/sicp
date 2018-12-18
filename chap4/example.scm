@@ -110,6 +110,8 @@
   (if (not (null? (cdddr exp)))
       (cadddr exp)
       #f))
+(define (make-if predicate consequent alternative)
+  (list 'if predicate consequent alternative))
 
 (define (begin? exp) (tagged-list? exp 'begin))
 (define (begin-actions exp) (cdr exp))
@@ -137,16 +139,16 @@
 (define (cond-else-clause? clause)
   (eq? (cond-predicate clause) 'else))
 (define (cond-predicate clause) (car clause))
-(define (cond-actions clause) (car clause))
+(define (cond-actions clause) (cdr clause))
 (define (cond->if exp) (expand-clauses (cond-clauses exp)))
 (define (expand-clauses clauses)
   (if (null? clauses)
       #f
-      (let ((fisrt (car clauses))
+      (let ((first (car clauses))
             (rest (cdr clauses)))
         (if (cond-else-clause? first)
             (if (null? rest)
-                (sequence->exp (cond-actions fisrt))
+                (sequence->exp (cond-actions first))
                 (error "ELSE clause isn't last: COND->IF"
                        clauses))
             (make-if (cond-predicate first)
