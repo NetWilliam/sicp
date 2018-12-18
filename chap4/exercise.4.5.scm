@@ -26,7 +26,7 @@
                 (make-if (cond-predicate-with-extenssion first)
                          ;(sequence->exp (cond-action-with-extension first))
                          ;((cond-action-with-extension first) ((cond-predicate-with-extenssion first)))
-                         (list (sequence->exp (cond-action-with-extension first)) (cond-predicate-with-extenssion first))
+                         (list (sequence->exp (cond-action-with-extension first)) (cond-predicate-with-extenssion first)) ; building AST, building structure to be evaluate by eval function
                          (expand-clauses rest))
                 (make-if (cond-predicate first)
                          (sequence->exp (cond-actions first))
