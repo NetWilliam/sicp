@@ -59,7 +59,7 @@
 
 (define (eval-definition exp env)
   (define-variable! (definition-variable exp)
-    (eval (deinition-value exp) env)
+    (eval (definition-value exp) env)
     env)
   'ok)
 
