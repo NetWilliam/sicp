@@ -26,7 +26,7 @@
           (procedure-body procedure)
           (extend-environment
            (procedure-parameters procedure)
-           argments
+           arguments
            (procedure-environment procedure))))
         (else
          (error
