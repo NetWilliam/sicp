@@ -1,0 +1,41 @@
+(load "example.scm")
+
+(define (eval exp env)
+  (cond ((self-evaluating? exp) exp)
+        ((variable? exp) (lookup-variable-value exp env))
+        ((quoted? exp) (text-of-quotation exp))
+        ((assignment? exp) (eval-assignment exp env))
+        ((definition? exp) (eval-definition exp env))
+        ((if? exp) (eval-if exp env))
+        ((lambda? exp) (make-procedure (lambda-parameters exp)
+                                       (lambda-body exp)
+                                       env))
+        ; my error code
+        ((let? exp) (apply
+                     (make-procedure (let-vars exp)
+                                     (let-body exp)
+                                     env)
+                     ;(map (lambda (exps) (eval exps env)) (let-exps exp))))
+                     (list-of-values (let-exps exp) env)))
+        ;(map (lambda (exps) (eval exps env)) (let-exps exp))))
+        ;(list-of-values (let-exps exp) env)))
+        ;        ((let? exp) (eval
+        ;                     (cons
+        ;                      (make-lambda (let-vars exp)
+        ;                                   (let-body exp))
+        ;                      (let-exps exp))
+        ;                     env))
+        ((begin? exp)
+         (eval-sequence (begin-actions exp) env))
+        ((cond? exp) (eval (cond->if exp) env))
+        ((application? exp)
+         (apply (eval (operator exp) env)
+                (list-of-values (operands exp) env)))
+        (else
+         (error "Unknown expression type: EVAL" exp))))
+
+(define (let? exp) (tagged-list? exp 'let))
+(define (let-body exp) (cddr exp))
+(define (let-pairs exp) (cadr exp))
+(define (let-vars exp) (map (lambda (pair) (car pair)) (let-pairs exp)))
+(define (let-exps exp) (map (lambda (pair) (cadr pair)) (let-pairs exp)))
