@@ -24,7 +24,7 @@
 (define (let->combination expr)
   (cons (make-lambda (let-vars expr) (let-body expr))
         (let-exps expr)))
-(define (let*? expr) (tagged-list? 'let* expr))
+(define (let*? expr) (tagged-list? expr 'let*))
 (define (make-let let-pairs let-body)
   (list 'let let-pairs (sequence->exp let-body)))
 (define (make-let* let-pairs let-body)
@@ -54,5 +54,25 @@
           (cdr (let-pairs expr))
           (let-body expr)))))))
 
-(define nl-wrong (let*->nested-lets '(let* ((x 3) (y (+ x 2)) (z (+ x y 5))) (* x z))))
+(define nl-wrong (let*->nested-lets       '(let* ((x 3) (y (+ x 2)) (z (+ x y 5))) (* x z))))
 (define nl-right (let*->nested-lets-right '(let* ((x 3) (y (+ x 2)) (z (+ x y 5))) (* x z))))
+
+(define (equal-part? s1 s2)
+  (cond ((and (pair? s1) (pair? s2))
+         (and (equal-part? (car s1) (car s2))) (equal-part? (cdr s1) (cdr s2)))
+        (else (if (equal? s1 s2)
+                  #t
+                  (begin (display "s1 s2 not equal" s1 s2) #f)))))
+
+;(define (let*-body expr) (caddr expr))
+;(define (let*-inits expr) (cadr expr))
+;(define (let*->nested-lets expr)
+;  (let ((inits (let*-inits expr))
+;        (body (let*-body expr)))
+;    (define (make-lets exprs)
+;      (if (null? exprs)
+;          body
+;          (list 'let (list (car exprs)) (make-lets (cdr exprs)))))
+;    (make-lets inits)))
+
+(eval '(let* ((x 3) (y (+ x 2)) (z (+ x y 5))) (* x z)) the-global-environment)
