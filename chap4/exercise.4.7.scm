@@ -25,8 +25,34 @@
   (cons (make-lambda (let-vars expr) (let-body expr))
         (let-exps expr)))
 (define (let*? expr) (tagged-list? 'let* expr))
+(define (make-let let-pairs let-body)
+  (list 'let let-pairs (sequence->exp let-body)))
+(define (make-let* let-pairs let-body)
+  (list 'let* let-pairs (sequence->exp let-body)))
+
+(define (let*->nested-lets-right exp)
+  (define (make-let params)
+    (cond ((last-exp? params) (append (list 'let
+                                            (list (car params)))
+                                      (let-body exp)))
+          (else (list 'let
+                      (list (car params))
+                      (make-let (cdr params))))))
+  (make-let (cadr exp)))
 
 (define (let*->nested-lets expr)
-  (if (<= 1 (length (let-pairs expr)))
-      (let->combination expr)
-      (list 'let (car (let-pairs expr)) ('let* (cdr (let-pairs expr)) (let-body expr)))))
+  (if (<= (length (let-pairs expr)) 1)
+      (make-let
+       (let-pairs expr)
+       (let-body expr))
+      (make-let
+       (list
+        (car (let-pairs expr)))
+       (list
+        (let*->nested-lets
+         (make-let*
+          (cdr (let-pairs expr))
+          (let-body expr)))))))
+
+(define nl-wrong (let*->nested-lets '(let* ((x 3) (y (+ x 2)) (z (+ x y 5))) (* x z))))
+(define nl-right (let*->nested-lets-right '(let* ((x 3) (y (+ x 2)) (z (+ x y 5))) (* x z))))
