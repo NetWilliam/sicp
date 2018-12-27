@@ -75,4 +75,4 @@
 ;          (list 'let (list (car exprs)) (make-lets (cdr exprs)))))
 ;    (make-lets inits)))
 
-(eval '(let* ((x 3) (y (+ x 2)) (z (+ x y 5))) (* x z)) the-global-environment)
+;(eval '(let* ((x 3) (y (+ x 2)) (z (+ x y 5))) (* x z)) the-global-environment)
