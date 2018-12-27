@@ -21,8 +21,8 @@
                           (list 'define (let-name expr) (make-lambda
                                                          (let-vars expr)
                                                          (let-body expr)))
-                          (cons (let-name expr) (let-exps expr)))
-                         '()))
+                          (cons (let-name expr) (let-exps expr))))
+            '())
       (cons (make-lambda (let-vars expr) (let-body expr))
             (let-exps expr))))
 
