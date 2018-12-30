@@ -230,6 +230,7 @@
         (list 'caddr caddr)
         (list 'cons cons)
         (list 'null? null?)
+        (list 'display display)
         (list '+ +)
         (list '- -)
         (list '* *)
