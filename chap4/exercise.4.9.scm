@@ -77,3 +77,5 @@
 
 (define test
   '(for (((i 0) (j 1)) (< (+ i j) 10) ((i (+ i 1)))) (display "i:") (display i) (display "\n") (display "j:") (display j) (display "\n")) )
+(define multiply-table
+  '(for (((i 1)) (< i 10) ((i (+ i 1)))) (for (((j i)) (< j 10) ((j (+ j 1)))) (display i) (display " * ") (display j) (display " = ") (display (* i j)) (display "\t")) (display "\n")))
