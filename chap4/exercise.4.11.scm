@@ -17,11 +17,40 @@
           (error "Too many arguments supplied" vars vals)
           (error "Too few arguments supplied" vars vals))))
 
+(define (define-variable! var val env)
+  (let ((result (assoc var env)))
+    (if (not result)
+        (append env (list (cons var val)))
+        (begin (set-cdr! result val)
+               env))))
+
+(define (extend-environment vars vals base-env)
+  (if (= (length vars) (length vals))
+      (append (zip vars vals) base-env)
+      (if (< (length vars) (length vals))
+          (error "Too many arguments supplied" vars vals)
+          (error "Too few arguments supplied" vars vals))))
+
+(define (lookup-variable-value var env)
+  (let ((result (assoc var env)))
+    (if (not result)
+        (error "Unbound variable" var)
+        (enclosing-environment result))))
+
+(define (set-variable-value! var val env)
+  (let ((result (assoc var env)))
+    (if (not result)
+        (error "Unbound variable" var)
+        (begin (set-cdr! result val)
+               env))))
+
 (define (setup-environment)
-  ())
+  (let ((initial-env
+         (extend-environment (primitive-procedure-names)
+                             (primitive-procedure-objects)
+                             the-empty-environment)))
+    (define-variable! 'true true initial-env)
+    (define-variable! 'false false initial-env)
+    initial-env))
 
 (define the-global-environment (setup-environment))
-
-(define (set-variable-value!))
-(define (define-variable!))
-(define (looup-variable-value))
