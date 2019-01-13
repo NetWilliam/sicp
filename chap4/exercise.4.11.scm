@@ -56,3 +56,41 @@
     initial-env))
 
 (define the-global-environment (setup-environment))
+
+;1 ]=> (driver-loop)
+;
+;
+;;;; M-Eval input:
+;(define x 3)
+;
+;;;; M-Eval output:
+;ok
+;
+;;;; M-Eval input:
+;(define (double y) (define (x z) (+ z 1)) (x y))
+;
+;;;; M-Eval output:
+;ok
+;
+;;;; M-Eval input:
+;x
+;
+;;;; M-Eval output:
+;3
+;
+;;;; M-Eval input:
+;(double 3)
+;
+;;;; M-Eval output:
+;4
+;
+;;;; M-Eval input:
+;x
+;
+;;;; M-Eval output:
+;(compound-procedure (z) ((+ z 1)) <procedure-env>)
+;
+;;;; M-Eval input:
+;End of input stream reached.
+;Moriturus te saluto.
+
