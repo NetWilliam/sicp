@@ -21,9 +21,10 @@
 (define (define-variable! var val env)
   (let ((result (assoc var env)))
     (if (not result)
-        (set-cdr! env (append (list (cons var val)) (cdr env)))
-        (begin (set-cdr! result val)
-               env))))
+        (let ((head (cons (car env) (cdr env))))
+          (set-car! env (cons var val))
+          (set-cdr! env head))
+        (set-cdr! result val))))
 
 (define (extend-environment vars vals base-env)
   (if (= (length vars) (length vals))
