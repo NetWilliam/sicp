@@ -7,7 +7,7 @@
       (cond ((null? vars)
              (env-loop (enclosing-environment env)))
             ((equal? var '*unassigned*)
-             (error "Lookup variable into *unssigned* value!" var))
+             (error "Lookup variable into *unassigned* value!" var))
             ((eq? var (car vars)) (car vals))
             (else (scan (cdr vars) (cdr vals)))))
     (if (eq? env the-empty-environment)
@@ -19,26 +19,28 @@
 
 ; b:
 (define (scan-out-defines procedure-body)
-  (define (is-nested-define item) (eq? (car item) 'define))
   (define (nested-define-name)
-    (map cadr
+    (map definition-variable
          (filter
-          is-nested-define
+          definition?
           procedure-body)))
   (define (nested-define-value)
-    (map caddr
+    (map definition-value
          (filter
-          is-nested-define
+          definition?
           procedure-body)))
   (define (rest-sequences)
     (remove
-     is-nested-define
+     definition?
      procedure-body))
-  (make-let (map (lambda (item) (list item '*unassigned*))
-                 (nested-define-name))
-            (append (map (lambda (item) (list 'set! (car item) (cadr item)))
-                         (zip (nested-define-name) (nested-define-value)))
-                    (rest-sequences))))
+  (if (null? (nested-define-name))
+      procedure-body
+      (list (append '(let)
+                    (list (map (lambda (item) (list item '(quote *unassigned*)))
+                               (nested-define-name)))
+                    (append (map (lambda (item) (list 'set! (car item) (cadr item)))
+                                 (zip (nested-define-name) (nested-define-value)))
+                            (rest-sequences))))))
 ;  (append (list 'let (map (lambda (item) (list item '*unassigned*))
 ;                          (nested-define-name)))
 ;          (map (lambda (item) (list 'set! (car item) (cadr item)))
@@ -47,11 +49,11 @@
 
 ; c: scan only once at evaluation
 (define (make-procedure parameters body env)
-  (display "make-procedure is called")
+  (display "make-procedure is called\n")
   (list 'procedure parameters (scan-out-defines body) env))
 
-(define x '((lambda (x) (define a (+ 3 5)) (define b (* 4 6)) (+ a b x)) 3))
-(define error-x '((lambda (x) (define xodd? ))))
+(define test-x '((lambda (x) (define a (+ 3 5)) (define b (* 4 6)) (+ a b x)) 3))
+(define error-x '((lambda (x) (define xodd?))))
 
 ;(define (scan-out-defines body)
 ;  (let ((defined-vars (definitions body)))
