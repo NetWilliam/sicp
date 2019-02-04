@@ -6,9 +6,10 @@
     (define (scan vars vals)
       (cond ((null? vars)
              (env-loop (enclosing-environment env)))
-            ((equal? var '*unassigned*)
-             (error "Lookup variable into *unassigned* value!" var))
-            ((eq? var (car vars)) (car vals))
+            ((eq? var (car vars))
+             (if (eq? (car vals) '*unassigned*)
+                 (error "Lookup variable into *unassigned* value! variable:" var)
+                 (car vals)))
             (else (scan (cdr vars) (cdr vals)))))
     (if (eq? env the-empty-environment)
         (error "Unbound variable" var)
@@ -49,7 +50,7 @@
 
 ; c: scan only once at evaluation
 (define (make-procedure parameters body env)
-  (display "make-procedure is called\n")
+  ;(display "make-procedure is called\n")
   (list 'procedure parameters (scan-out-defines body) env))
 
 (define test-x '((lambda (x) (define a (+ 3 5)) (define b (* 4 6)) (+ a b x)) 3)) ; result of the eval should be 35

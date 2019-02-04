@@ -22,7 +22,7 @@
          (error "Unknown expression type: EVAL" expr))))
 
 (define (let->combination expr)
-  (display "let->combination is called\n")
+  ;(display "let->combination is called\n")
   (cons (make-lambda (let-vars expr) (let-body expr))
         (let-exps expr)))
 (define (let*? expr) (tagged-list? expr 'let*))
