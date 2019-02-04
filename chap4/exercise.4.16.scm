@@ -52,8 +52,8 @@
   (display "make-procedure is called\n")
   (list 'procedure parameters (scan-out-defines body) env))
 
-(define test-x '((lambda (x) (define a (+ 3 5)) (define b (* 4 6)) (+ a b x)) 3))
-(define error-x '((lambda (x) (define xodd?))))
+(define test-x '((lambda (x) (define a (+ 3 5)) (define b (* 4 6)) (+ a b x)) 3)) ; result of the eval should be 35
+(define error-x '((lambda (x) (define (xodd? n) (if (= n 0) false (xeven? (- n 1)))) (define (xeven? n) (if (= n 0) true (xodd? (- n 1)))) (xodd? (- x 1))) 3)) ; eval of this statement should signal an error
 
 ;(define (scan-out-defines body)
 ;  (let ((defined-vars (definitions body)))
