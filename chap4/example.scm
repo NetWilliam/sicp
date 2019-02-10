@@ -4,6 +4,7 @@
         ((islist? exp) (eval-list exp env))
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (text-of-quotation exp))
+        ((and? exp) (eval-and exp env))
         ((assignment? exp) (eval-assignment exp env))
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
@@ -22,6 +23,13 @@
         (else
          (error "Unknown expression type: EVAL" exp))))
 
+(define (and? expr) (and (pair? expr) (eq? (car expr) 'and)))
+(define (eval-and expr env)
+  (define (iter-and operands)
+    (if (null? operands)
+        #t
+        (and (eval (car operands) env) (iter-and (cdr operands)))))
+  (iter-and (operands expr)))
 (define (islist? expr) (and (pair? expr) (eq? (car expr) 'list)))
 (define (eval-list expr env) (map (lambda (item) (eval item env)) (cdr expr)))
 
@@ -258,9 +266,11 @@
         (list 'caddr caddr)
         (list 'cons cons)
         (list 'null? null?)
+        (list 'not not)
         (list 'display display)
         (list 'append append)
         (list 'abs abs)
+        (list 'length length)
         (list 'modulo modulo)
         (list '+ +)
         (list '- -)
