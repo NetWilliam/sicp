@@ -1,6 +1,11 @@
 ; example.2.42.scm n-queen (queens boardsize)
 ; (original metacircular evaluator)
 
+;$ scheme -load example.scm
+;$ (driver-loop)
+;$ #input the contents of n-queens.scm
+;$ #count time cost
+
 ;;;; M-Eval input:
 ;(runtime)
 ;
@@ -35,3 +40,7 @@
 
 
 ; (metacircular evaluator with analyze funciton seperated from eval function)
+;$ scheme-load exercise.4.22.scm
+;$ (driver-loop)
+;$ #input the contents of n-queens.scm
+;$ #count time cost
