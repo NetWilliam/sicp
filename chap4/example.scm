@@ -272,6 +272,7 @@
         (list 'abs abs)
         (list 'length length)
         (list 'modulo modulo)
+        (list 'runtime runtime)
         (list '+ +)
         (list '- -)
         (list '* *)
