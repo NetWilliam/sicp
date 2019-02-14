@@ -27,8 +27,9 @@
 
 (define (analyze-let expr)
   (let ((vars (let-vars expr))
-        (vals (let-exps expr))
+        (vals (map analyze (let-exps expr)))
         (bproc (analyze-sequence (let-body expr))))
     (lambda (env) (execute-application
                    (make-procedure vars bproc env)
-                   vals))))
+                   (map (lambda (val) (val env)) vals)))))
+; (let ((x (+ 3 5)) (y 3)) (+ x y))
