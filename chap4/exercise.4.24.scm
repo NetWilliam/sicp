@@ -104,7 +104,7 @@
 
 
 ;time cost:
-;| table-head | q5 | q7 | q8 |
-;| old | .37 | 6.58 | 30.29 |
-;| new | .36 | 4.25 | 19.17 |
+;| table-head | q5 | q7 | q8 | compling time |
+;| old | .37 | 6.58 | 30.29 | .1 |
+;| new | .36 | 4.25 | 19.17 | .12 |
 ; cut about 50% time off
