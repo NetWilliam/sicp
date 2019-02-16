@@ -5,7 +5,6 @@
         (else (actual-value (first-exp exps) env)
               (eval-sequence (rest-exps exps) env))))
 
-; consider p3 which give the same results in both intepreter:
 (define (p1 x)
   (set! x (cons x '(2)))
   x)
@@ -14,6 +13,7 @@
     e
     x)
   (p (set! x (cons x '(2)))))
+; consider p3 which give the same results in both intepreter:
 (define (p3 x)
   (define (p e)
     (display "(e): ")
@@ -22,5 +22,5 @@
     x)
   (p (set! x (cons x '(2)))))
 
-; the thunk e will not be evaluated once it's not needed by primitve procedures
+; the thunk e will not be forced once it's not needed by primitve procedures
 ; so that's the answer to subproblem a, b, and c

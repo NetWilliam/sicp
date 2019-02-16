@@ -27,9 +27,6 @@
         (else
          (error "Unknown expression type: EVAL" expr))))
 
-(define (actual-value expr env)
-  (force-it (eval expr env)))
-
 (define (apply procedure arguments env)
   (cond ((primitive-procedure? procedure)
          (apply-primitive-procedure
@@ -75,6 +72,9 @@
       (announce-output output-prompt)
       (user-print output)))
   (driver-loop))
+
+(define (actual-value expr env)
+  (force-it (eval expr env)))
 
 (define (force-it obj)
   (if (thunk? obj)

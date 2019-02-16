@@ -273,6 +273,8 @@
         (list 'length length)
         (list 'modulo modulo)
         (list 'runtime runtime)
+        (list 'newline newline)
+        (list 'set! (named-lambda (set!-x var val) (set! var val) var))
         (list '+ +)
         (list '- -)
         (list '* *)
