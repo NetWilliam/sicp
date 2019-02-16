@@ -89,7 +89,7 @@
 (define (thunk-env thunk) (caddr thunk))
 
 (define (evaluated-thunk? obj)
-  (tagged-list? obj 'evaluate-thunk))
+  (tagged-list? obj 'evaluated-thunk))
 (define (thunk-value evaluated-thunk)
   (cadr evaluated-thunk))
 (define (force-it obj)
