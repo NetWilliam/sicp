@@ -1,0 +1,63 @@
+(load "example.lazy.evaluation.scm")
+
+(define (eval expr env)
+  (cond ((self-evaluating? expr) expr)
+        ((islist? expr) (eval-list expr env))
+        ((variable? expr) (lookup-variable-value expr env))
+        ((quoted? expr) (text-of-quotation expr))
+        ((and? expr) (eval-and expr env))
+        ((assignment? expr) (eval-assignment expr env))
+        ((definition? expr) (eval-definition expr env))
+        ((if? expr) (eval-if expr env))
+        ((filter? expr) (eval-filter expr env))
+        ((map? expr) (eval-map expr env))
+        ((flatmap? expr) (eval-flatmap expr env))
+        ((lambda? expr) (make-procedure (lambda-parameters expr)
+                                        (lambda-body expr)
+                                        env))
+        ((begin? expr)
+         (eval-sequence (begin-actions expr) env))
+        ((cond? expr) (eval (cond->if expr) env))
+        ((application? expr)
+         (apply (actual-value (operator expr) env)
+                (operands expr)
+                env))
+        (else
+         (error "Unknown expression type: EVAL" expr))))
+
+(define (apply procedure arguments env)
+  (cond ((primitive-procedure? procedure)
+         (apply-primitive-procedure
+          procedure
+          (list-of-arg-values arguments env)))
+        ((compound-procedure? procedure)
+         (eval-sequence
+          (procedure-body procedure)
+          (extend-environment
+           (procedure-parameters procedure)
+           (list-of-delayed-args arguments env)
+           (procedure-environment procedure))))
+        (else (error "Unknown procedure type: APPLY"
+                     procedure))))
+
+(define (list-of-arg-values exprs env)
+  (if (no-operands? exprs)
+      '()
+      (cons (actual-value (first-operand exprs)
+                          env)
+            (list-of-arg-values (rest-operands exprs)
+                                env))))
+(define (list-of-delayed-args exprs env)
+  (if (no-operands? exprs)
+      '()
+      (cons (delay-it (first-operand exprs)
+                      env)
+            (list-of-delayed-args (rest-operands exprs)
+                                  env))))
+
+(define (eval-definition expr env)
+  (define-variable!
+    (definition-variable expr)
+    (eval (definition-value expr) env)
+    env)
+  'ok)
