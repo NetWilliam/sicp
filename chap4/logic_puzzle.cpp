@@ -109,10 +109,9 @@ int main()
             cout << "baker: " << floors[D::baker] << " cooper: " << floors[D::cooper]
                  << " fletcher: " << floors[D::fletcher] << " miller: " << floors[D::miller]
                  << " smith: " << floors[D::smith] << endl;
-            cout << "expect: baker: 3 cooper: 2 fletcher: 4 miller: 5 smith: 1" << endl;
-            // break;
         }
     }
+    cout << "expect:\nbaker: 3 cooper: 2 fletcher: 4 miller: 5 smith: 1" << endl;
 
     if (false)
     {
