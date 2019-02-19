@@ -42,10 +42,10 @@
     (succeed (lookup-variable-value expr env) fail)))
 
 (define (analyze-lambda expr)
-  (let (vars (lambda-parameters expr))
-    (bproc (analyze-sequence (lambda-body expr))))
-  (lambda (env succeed fail)
-    (succeed (make-procedure vars bproc env) fail)))
+  (let ((vars (lambda-parameters expr))
+        (bproc (analyze-sequence (lambda-body expr))))
+    (lambda (env succeed fail)
+      (succeed (make-procedure vars bproc env) fail))))
 
 (define (analyze-if expr)
   (let ((pproc (analyze (if-predicate expr)))
@@ -102,5 +102,84 @@
                             (fail2)))))
              fail))))
 
-(define (analyze-apploication expr)
-  (let ((fproc (analyze ())))))
+(define (analyze-application expr)
+  (let ((fproc (analyze (operator expr)))
+        (aprocs (map analyze (operands expr))))
+    (lambda (env succeed fail)
+      (fproc env
+             (lambda (proc fail2)
+               (get-args aprocs
+                         env
+                         (lambda (args fail3)
+                           (execute-application
+                            proc args succeed fail3))
+                         fail2))
+             fail))))
+
+(define (get-args aprocs env succeed fail)
+  (if (null? aprocs)
+      (succeed '() fail)
+      ((car aprocs)
+       env
+       (lambda (arg fail2)
+         (get-args
+          (cdr aprocs)
+          env
+          (lambda (args fail3)
+            (succeed (cons arg args) fail3))
+          fail2))
+       fail)))
+
+(define (execute-application proc args succeed fail)
+  (cond ((primitive-procedure? proc)
+         (succeed (apply-primitive-procedure proc args)
+                  fail))
+        ((compound-procedure? proc)
+         ((procedure-body proc)
+          (extend-environment
+           (procedure-parameters proc)
+           args
+           (procedure-environment proc))
+          succeed
+          fail))
+        (else
+         (error "Unkown procedure type: EXECUTE-APPLICATION"
+                proc))))
+
+(define (analyze-amb expr)
+  (let ((cprocs (map analyze (amb-choices expr))))
+    (lambda (env succeed fail)
+      (define (try-next choices)
+        (if (null? choices)
+            (fail)
+            ((car choices)
+             env
+             succeed
+             (lambda () (try-next (cdr choices))))))
+      (try-next cprocs))))
+
+(define input-prompt  ";;; Amb-Eval input:")
+(define output-prompt ";;; AMb-Eval value:")
+
+(define (driver-loop)
+  (define (internal-loop try-again)
+    (prompt-for-input input-prompt)
+    (let ((input (read)))
+      (if (eq? input 'try-again)
+          (try-again)
+          (begin
+           (newline) (display ";;; Starting a new problem ")
+           (ambeval
+            input
+            the-global-environment
+            (lambda (val next-alternative)
+              (user-print val)
+              (internal-loop next-alternative))
+            (lambda ()
+              (annouce-output
+               (user-print input)
+               (driver-loop))))))))
+  (internal-loop
+   (lambda ()
+     (newline) (display ";;; There is no current problem")
+     (driver-loop))))
