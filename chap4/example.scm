@@ -1,3 +1,5 @@
+(define raw-eval eval)
+(define raw-apply apply)
 (define apply-in-underlying-scheme apply)
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
