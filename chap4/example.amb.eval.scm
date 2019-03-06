@@ -172,9 +172,11 @@
            (ambeval
             input
             the-global-environment
+            ;; ambeval success
             (lambda (val next-alternative)
               (user-print val)
               (internal-loop next-alternative))
+            ;; ambeval failure
             (lambda ()
               (annouce-output
                (user-print input)

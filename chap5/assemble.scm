@@ -2,9 +2,9 @@
 
 (define (assemble controller-text machine)
   (extract-labels controller-text
-    (lambda (insts labels)
-      (replace-insts! insts labels machine)
-      insts)))
+                  (lambda (insts labels)
+                    (replace-insts! insts labels machine)
+                    insts)))
 
 ;;; EXTRACT-LABELS is called with a receiver, so that it can pass back
 ;;; two values.  The first is the list of instructions, with the
@@ -23,9 +23,12 @@
 (define (extract-labels text receive)
   (if (null? text)
       (receive '() '())
-      (extract-labels (cdr text)
+      (extract-labels
+       (cdr text)
        (lambda (insts labels)
          (let ((next-inst (car text)))
+           (if (and (symbol? next-inst) (memv next-inst text))
+               (error "Duplicated symbol" next-inst))
            (if (symbol? next-inst)
                (receive insts
                         (cons (make-label-entry next-inst insts)
@@ -50,12 +53,12 @@
         (let ((insts (car result))
               (labels (cdr result)))
           (let ((next-inst (car text)))
-           (if (symbol? next-inst)
-               (cons insts
-                     (cons (make-label-entry next-inst insts)
-                           labels))
-               (cons (cons next-inst insts)
-                     labels)))))))
+            (if (symbol? next-inst)
+                (cons insts
+                      (cons (make-label-entry next-inst insts)
+                            labels))
+                (cons (cons next-inst insts)
+                      labels)))))))
 
 |#
 ;;; INSTS is initially a sequence of the text of the
@@ -73,7 +76,7 @@
     (for-each-list-tail
      (lambda (tail)
        (let ((inst (car tail)))
-         (set-car! 
+         (set-car!
           tail
           (make-instruction
            inst
@@ -184,7 +187,7 @@
 (define (make-restore inst machine stack pc)
   (let ((reg (get-register machine (stack-inst-reg-name inst))))
     (lambda ()
-      (set-contents! reg (pop stack))    
+      (set-contents! reg (pop stack))
       (advance-pc pc))))
 
 (define (stack-inst-reg-name stack-instruction)
@@ -296,8 +299,8 @@
 
 (define (parse-primitive-exp exp machine labels)
   (cond ((constant-exp? exp)
-	 (let ((c (constant-exp-value exp)))
-	   (lambda () c)))
+         (let ((c (constant-exp-value exp)))
+           (lambda () c)))
         ((label-exp? exp)
          (let ((l (lookup-label labels (label-exp-label exp))))
            (lambda () l)))
@@ -307,7 +310,7 @@
         (else (error "unknown expression type -- ASSEMBLE" exp))))
 
 ;;;lookup a name in the table of operations.  Signal error
-;;;if operation not in table. 
+;;;if operation not in table.
 
 (define (lookup-prim symbol operations)
   (let ((val (assq symbol operations)))
