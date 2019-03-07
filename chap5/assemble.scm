@@ -27,12 +27,12 @@
        (cdr text)
        (lambda (insts labels)
          (let ((next-inst (car text)))
-           (if (and (symbol? next-inst) (memv next-inst text))
-               (error "Duplicated symbol" next-inst))
            (if (symbol? next-inst)
-               (receive insts
-                        (cons (make-label-entry next-inst insts)
-                              labels))
+               (if (memv next-inst text)
+                   (error "Duplicated symbol" next-inst)
+                   (receive insts
+                            (cons (make-label-entry next-inst insts)
+                                  labels)))
                (receive (cons next-inst insts)
                         labels)))))))
 
